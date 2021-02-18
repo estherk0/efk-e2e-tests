@@ -10,11 +10,6 @@ import (
 	"strings"
 )
 
-const (
-	userid   = "elastic"
-	password = "tacoword"
-)
-
 // ElasticsearchIndex is an index struct from Elasticsearch API
 type ElasticsearchIndex struct {
 	Health string `json:"health"`
@@ -57,9 +52,11 @@ func RunElasticsearchE2ETest(esURL string) error {
 
 func getElasticsearchIndices(esURL string) ([]string, error) {
 	targetIndices := [1]string{"platform"} // TODO
-	log.Println("[INFO] Trying to check Elasticsearch Indices...")
 	log.Println("[INFO] Elasticsearch URL: " + esURL)
-	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	log.Println("[INFO] Trying to check Elasticsearch Indices...")
+	if strings.Contains(esURL, "https") {
+		http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
 	req, err := http.NewRequest("GET", esURL+"/_cat/indices", nil)
 	if err != nil {
 		return nil, err

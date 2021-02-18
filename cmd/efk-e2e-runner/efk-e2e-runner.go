@@ -6,14 +6,18 @@ import (
 	"strings"
 )
 
+// TODO: make it parameters
+const (
+	userid   = "elastic"
+	password = "tacoword"
+)
+
 func main() {
 	args := map[string]*string{}
 	args["esURL"] = flag.String("es-host", "https://127.0.0.1:9200", "Elasticsearch URL")
 	args["kibanaURL"] = flag.String("kibana-host", "https://127.0.0.1:5601", "Kibana URL")
 	args["targetList"] = flag.String("targets", "elasticsearch,kibana", "test target list seperated by comma")
-
 	flag.Parse()
-	log.Println(*args["kibanaURL"])
 
 	targetList := strings.Split(*args["targetList"], ",")
 
@@ -26,7 +30,7 @@ func main() {
 				panic(err)
 			}
 		case "kibana":
-			err := RunKibanaE2ETest()
+			err := RunKibanaE2ETest(*args["kibanaURL"])
 			if err != nil {
 				log.Fatal("[ERROR] ", err.Error())
 				panic(err)
